@@ -1,0 +1,389 @@
+{
+	"info": {
+		"_postman_id": "3a73fd83-625d-4dd5-b023-b782b5369fe0",
+		"name": "Practice API Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Customer Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"var my_token = jsonData.token;\r",
+							"pm.environment.set(\"token\", my_token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"salman\",\r\n    \"password\":\"salman1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/customer/api/v1/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"customer",
+						"api",
+						"v1",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CustomerList",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check Create New Customer\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(95432);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/customer/api/v1/list",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"customer",
+						"api",
+						"v1",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Specific Customer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Customer id check\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.id).to.eql(102);\r",
+							"});\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/customer/api/v1/get/102",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"customer",
+						"api",
+						"v1",
+						"get",
+						"102"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create New Customer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check Create New Customer\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(\"Success\");\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let id=_.random(1000, 9999)\r",
+							"pm.environment.set(\"id\", id);\r",
+							"\r",
+							"const reqObject = {\r",
+							"  url: 'https://api.namefake.com/english-united-states/male/',\r",
+							"  method: 'GET',\r",
+							"  header: 'Content-Type:application/json'\r",
+							"};\r",
+							"\r",
+							"pm.sendRequest(reqObject, (err, res) => {\r",
+							"    let {name} = res.json()\r",
+							"    let {phone_w}=res.json()\r",
+							"    let {email_u} = res.json()\r",
+							"    let email=email_u+'@checkmail.com'\r",
+							"    \r",
+							"    pm.environment.set(\"name\", name);\r",
+							"    pm.environment.set(\"email\", email);\r",
+							"    pm.environment.set(\"phone_number\", phone_w);\r",
+							"  \r",
+							"   \r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"{{id}}\",\r\n    \"name\":\"{{name}}\",\r\n    \"email\":\"{{email}}\",\r\n    \"address\":\"South Korea\",\r\n    \"phone_number\":\"{{phone_number}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/customer/api/v1/create",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"customer",
+						"api",
+						"v1",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Existing Customer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check Duplicate Customer\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.error.message).to.eql(\"Customer already exists\");\r",
+							"pm.test(\"Status code is 208\", function () {\r",
+							"    pm.response.to.have.status(208);\r",
+							"});\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let id=_.random(1000, 9999)\r",
+							"pm.environment.set(\"id\", id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": {{id}},\r\n    \"name\":\"Mim\",\r\n    \"email\":\"mim@gmail.com\",\r\n    \"address\":\"Dhanmondi, Dhaka\",\r\n    \"phone_number\":\"017980\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/customer/api/v1/create",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"customer",
+						"api",
+						"v1",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Existing Customer Details",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check Update Existing Customer\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(\"Success\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n            \"id\": \"6431\",\r\n            \"name\": \"Prof. Chad Herman\",\r\n            \"email\": \"crona.magdalen@checkmail.com\",\r\n            \"address\": \"USA\",\r\n            \"phone_number\": \"(372)708-4589\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/customer/api/v1/update/{{id}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"customer",
+						"api",
+						"v1",
+						"update",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Customer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check Update Customer\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(\"Success\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":{{id}},\r\n    \"name\":\"{{name}}\",\r\n    \"email\":\"{{email}}\",\r\n    \"address\":\"Switzerland\",\r\n    \"phone_number\":\"{{phone_number}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/customer/api/v1/update/{{id}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"customer",
+						"api",
+						"v1",
+						"update",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
